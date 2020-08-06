@@ -68,9 +68,3 @@ if login:
                     qc.ordenarProdutos(ord_de_cód=True)
                 print('', '-' * 81)
         break
-
-
-
-
-
-

@@ -185,7 +185,6 @@ def análiseDeRepetição(informação, posição, nome_do_arquivo=''):
             return True
         else:
             return False
-            break
 
 
 def realizarLogin(email='', senha='', nome_do_arquivo=''):
