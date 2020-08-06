@@ -1,4 +1,4 @@
-from DESAFIO import quero_curso as qc
+import quero_curso as qc
 from time import sleep
 
 if not qc.verificarArquivo('cadastro.txt'): #Verifica se o arquivo 'cadastro.txt' existe
