@@ -176,26 +176,40 @@ def pegarSenha():
 
 
 def análiseDeRepetição(informação, posição, nome_do_arquivo=''):
+    '''
+    ->Faz uma análise da informação passa com as já cadastradas para verificar repetições.
+    :param informação: A informação que será analisada.
+    :param posição: A posição no arquivo que está o conjunto de dados do mesmo tipo.
+    :param nome_do_arquivo: Nome do arquivo.txt a ser aberto.
+    :return: Retorna False para caso o arquivo esteja vazio ou não haja repetição. Retorna True caso haja repetição.
+    '''
     arq = open(nome_do_arquivo, 'rt')
     arq.readline()
     for linhas in arq:
         if linhas == '':
             return False
-        if informação == linhas.split(';')[posição]:
+        if informação == linhas.split(';')[posição]: #Comparação da informação com a coluna especificada de dados do arquivo.
             return True
         else:
             return False
 
 
 def realizarLogin(email='', senha='', nome_do_arquivo=''):
+    '''
+    ->Verifica se os dados passados constam no arquivo de cadastro para uma efetuação do login.
+    :param email: Recebe o e-mail passado na área de login.
+    :param senha: Recebe a senha passada na área de login.
+    :param nome_do_arquivo: Nome do arquivo.txt a ser analisado.
+    :return: Retorna True no caso dos dados passados estarem cadastrados e False caso não estejam.
+    '''
     arq = open(nome_do_arquivo, 'rt')
     arq.readline()
     tupla = (email, senha)
     lista = []
     for linhas in arq:
-        tupla_dados = (linhas.split(';')[2], linhas.split(';')[3].replace('\n', ''))
+        tupla_dados = (linhas.split(';')[2], linhas.split(';')[3].replace('\n', '')) #Pega os e-mails e senhas do arquivo, colocando eles em uma tupla.
         lista.append(tupla_dados)
-    if tupla in lista:
+    if tupla in lista: #Verifica se a tupla contendo os dados passados consta na lista com as tuplas de dados cadastrados.
         print('-- Login efetuado --')
         return True
     else:
@@ -205,9 +219,10 @@ def realizarLogin(email='', senha='', nome_do_arquivo=''):
 
 def ordenarProdutos(ord_de_cód=False, crescente=True):
     '''
-    ->Função para ordenamento e exibição por preço de produtos.
-    :param crescente: Se True, o ordenamento será crescente. Se False, o ordenamento será decrescente.
-    :return: Sem retorno
+    ->Realiza a ordenação com base nos preços ou códigos dos produtos contidos no arquivo "produtos.txt".
+    :param ord_de_cód: Caso True, irá ordenar por código. Caso False, permite a ordenação por preço.
+    :param crescente: Caso True, irá ordenar do mais barato ao mais caro. Caso False, ordena do mais caro ao mais barato.
+    :return: Sem retorno.
     '''
     lista = []
     lista_produtos = []
