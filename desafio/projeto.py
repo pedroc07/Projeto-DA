@@ -2,7 +2,7 @@ from desafio import quero_curso as qc
 from time import sleep
 
 if not qc.verificarArquivo('cadastro.txt'): #Verifica se o arquivo 'cadastro.txt' existe
-    qc.criarArquivo('cadastro.txt') #Cria o arquivo caso o mesmo não já tenha sido criado
+    qc.criarArquivo('cadastro.txt', 'cpf;telefone;e-mail;senha') #Cria o arquivo caso o mesmo não já tenha sido criado
 
 qc.cabeçalho('SUPERMERCADO ABA')
 print('''
@@ -68,3 +68,5 @@ if login:
                     qc.ordenarProdutos(ord_de_cód=True)
                 print('', '-' * 81)
         break
+
+lista_compras = qc.compras('produtos.txt')

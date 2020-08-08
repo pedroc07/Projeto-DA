@@ -14,7 +14,7 @@ def verificarArquivo(nome_do_arquivo=''):
         return True
 
 
-def criarArquivo(nome_do_arquivo=''):
+def criarArquivo(nome_do_arquivo='', primeira_linha=''):
     '''
     --> Responsável pela criação de um arquivo.
     :param nome_do_arquivo: É passado o nome do arquivo juntamente com sua extensão.
@@ -23,7 +23,7 @@ def criarArquivo(nome_do_arquivo=''):
 
     try:
        arq = open(nome_do_arquivo, 'wt+')
-       arq.write('cpf;telefone;e-mail;senha\n')
+       arq.write(primeira_linha + '\n')
        arq.close()
     except:
         print('Não foi possível criar o arquivo')
@@ -261,3 +261,117 @@ def ordenarProdutos(ord_de_cód=False, crescente=True):
     else:
         for produto in lista_produtos:
             print(f"| Codigo: {produto['codigo']}     Produto: {produto['produto']:<18}", f"Preço: R${float(produto['preço']):<10.2f}".replace('.', ','), f"Estoque: {produto['estoque']:<5}", f"{'|':<1}")
+
+
+def compras(nome_do_arquivo='', definidor_de_retorno = True):
+    org = {}
+    lista_geral = []
+    cód_produtos = []
+    cód_usados = []
+    inf_do_arq = []
+    try:
+        with open(nome_do_arquivo, 'rt', encoding='utf8') as arq:
+            arq.readline()
+            for linhas in arq:
+                cód_produtos.append(linhas.split(';')[0])
+    except:
+        print('-- Não foi possível a leitura do arquivo de produtos --')
+    else:
+
+        while True:
+            repetição = False
+            sem_estoque = False
+            try:
+                código = str(input('Código do produto: ')).strip()
+            except:
+                print('-- Digite uma numeração composta por 4 digitos --')
+                continue
+            else:
+                if not código.isnumeric():
+                    print('-- O código dos produtos são compostos somente por números --')
+                    continue
+                if código not in cód_produtos:
+                    print('-- O código digitado não corresponde a um produto --')
+                    continue
+                else:
+                    if código not in cód_usados:
+                        with open(nome_do_arquivo, 'rt', encoding='utf8') as arq:
+                            arq.readline()
+                            for linhas in arq:
+                                if código == linhas.split(';')[0]:
+                                    if int(linhas.split(';')[3]) == 0:
+                                        sem_estoque = True
+                                        print('-- No momento estamos com falta do produto --')
+                                        break
+                                    else:
+                                        org['produto'] = linhas.split(';')[1]
+                                        org['código'] = linhas.split(';')[0]
+                                        org['preçoUnidade'] = float(linhas.split(';')[2])
+                                        org['estoque'] = int(linhas.split(';')[3])
+                                        cód_usados.append(código)
+                            if sem_estoque:
+                                perg = str(input('Quer continuar a compra?[S/N] ')).strip().upper()[0]
+                                while perg not in 'SN':
+                                    print('Digite SIM ou NÃO')
+                                    perg = str(input('Quer continuar a compra?[S/N] ')).strip().upper()[0]
+                                if perg == 'S':
+                                    continue
+                                else:
+                                    break
+                    else:
+                        repetição = True
+
+            while True:
+                try:
+                    quantidade = int(input('Quantidade a ser comprada:'))
+                except:
+                    print('Dado inválido')
+                    continue
+                else:
+                    if not repetição:
+                        org['quantidade'] = quantidade
+                        if org['quantidade'] > org['estoque']:
+                            print(f'-- A quantia excede o estoque de {org["estoque"]} {org["produto"]} --')
+                            continue
+                        else:
+                            org['estoque'] -= org['quantidade']
+                            org["preçoTot"] = org['quantidade'] * org['preçoUnidade']
+                            lista_geral.append(org.copy())
+                    else:
+                        for num, dicionários in enumerate(lista_geral):
+                            if dicionários['código'] == código:
+                                if quantidade <= dicionários['estoque']:
+                                    lista_geral[num]['quantidade'] += quantidade
+                                    lista_geral[num]['preçoTot'] += quantidade * lista_geral[num]['preçoUnidade']
+                                    lista_geral[num]['estoque'] -= quantidade
+                                else:
+                                    print(f'-- A quantidade excede o estoque de {lista_geral[num]["estoque"]} {lista_geral[num]["produto"]}')
+                break
+            perg = str(input('Deseja realizar mais uma compra?[S/N] ')).strip().upper()[0]
+            while perg not in 'SN':
+                print('Digite SIM ou NÃO')
+                perg = str(input('Deseja realizar mais uma compra?[S/N] ')).strip().upper()[0]
+            if perg == 'S':
+                continue
+            else:
+                break
+
+        with open(nome_do_arquivo, 'rt', encoding='utf8') as arq:
+            arq.readline()
+            for linhas in arq:
+                inf_do_arq.append(linhas)
+        with open(nome_do_arquivo, 'wt+', encoding='utf8') as arq:
+            arq.write('código;produto;preço;estoque' + '\n')
+        with open(nome_do_arquivo, 'at', encoding='utf8') as arq:
+            for linhas in inf_do_arq:
+                if lista_geral == []:
+                    arq.write(linhas)
+                else:
+                    for dicionários in lista_geral:
+                        if linhas.split(';')[0] == dicionários['código']:
+                            correção = linhas.split(';')
+                            correção[3] = str(dicionários['estoque'])
+                            arq.write(';'.join(correção) + '\n')
+                        else:
+                            arq.write(linhas)
+    return lista_geral

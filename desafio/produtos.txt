@@ -1,4 +1,4 @@
-codigo;produto;preço;estoque
+código;produto;preço;estoque
 0001;SabãoEmPó;5.90;100
 0002;Detergente;1.55;100
 0003;AguaSanitaria;1.00;100
@@ -113,8 +113,8 @@ codigo;produto;preço;estoque
 0114;Ricota;4.23;134
 0115;Bolo;25.32;0
 0116;Bolacha;5.00;0
-0117;Torta;60.00;12
-0118;Salgados;50.00;9029
+0117;Torta;60.00;2
+0118;Salgados;50.00;8990
 0119;Fósforo;0.56;234
 0120;Velas;1.00;12
 0121;PilhasAA;4.00;1256
