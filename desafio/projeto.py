@@ -40,7 +40,7 @@ if opção == 2:
 qc.cabeçalho('LOGIN')
 email_login = qc.pegarEmail(False)
 senha_login = qc.pegarSenha()
-login = qc.realizarLogin(email_login, senha_login, 'cadastro.txt') #Análise da correspondência do e-mail e senha com os já armazenados
+login = qc.realizarLogin(login1=email_login, login2=senha_login, nome_do_arquivo='cadastro.txt', pos1=2, pos2=3) #Análise da correspondência do e-mail e senha com os já armazenados
 
 if login:
     qc.cabeçalho('ÁREA DE COMPRAS')
@@ -69,4 +69,4 @@ if login:
                 print('', '-' * 81)
         break
 
-lista_compras = qc.compras('produtos.txt')
+    lista_compras = qc.compras('produtos.txt')

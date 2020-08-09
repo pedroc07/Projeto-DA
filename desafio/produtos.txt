@@ -126,7 +126,7 @@ código;produto;preço;estoque
 0127;Amaciante;8.45;985
 0128;Vassoura;10.00;123
 0129;Pano;3.79;20
-0130;Inseticida;4.23;1923
+0130;Inseticida;4.23;1901
 0131;Acetona;2.00;1234
 0132;Algodão;3.00;12
 0133;Talco;3.57;983

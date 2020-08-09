@@ -194,20 +194,22 @@ def análiseDeRepetição(informação, posição, nome_do_arquivo=''):
             return False
 
 
-def realizarLogin(email='', senha='', nome_do_arquivo=''):
+def realizarLogin(pos1, pos2, login1='', login2='', nome_do_arquivo=''):
     '''
-    ->Verifica se os dados passados constam no arquivo de cadastro para uma efetuação do login.
-    :param email: Recebe o e-mail passado na área de login.
-    :param senha: Recebe a senha passada na área de login.
-    :param nome_do_arquivo: Nome do arquivo.txt a ser analisado.
-    :return: Retorna True no caso dos dados passados estarem cadastrados e False caso não estejam.
+    ->Verifica o login do usuário, com base nos dados passados e os que estão cadastrados.
+    :param pos1: Posição no arquivo do primeiro elemento de verificação.
+    :param pos2: Posição no arquivo do segundo elemento de verificação.
+    :param login1: Primeiro elemento para efetuação do login. Ex: e-mail, código de login e etc...
+    :param senha: Segundo elemento para efetuação do login. Ex: Senhas, códigos e etc...
+    :param nome_do_arquivo: Nome do arquivo com sua extensão a ser analisado.
+    :return: Caso haja correspondência das informações, logo havendo login, retorna True. Senão, retorna False.
     '''
     arq = open(nome_do_arquivo, 'rt')
     arq.readline()
-    tupla = (email, senha)
+    tupla = (login1, login2)
     lista = []
     for linhas in arq:
-        tupla_dados = (linhas.split(';')[2], linhas.split(';')[3].replace('\n', '')) #Pega os e-mails e senhas do arquivo, colocando eles em uma tupla.
+        tupla_dados = (linhas.split(';')[pos1], linhas.split(';')[pos2].replace('\n', '')) #Pega as informações das possições passadas do arquivo, colocando eles em uma tupla.
         lista.append(tupla_dados)
     if tupla in lista: #Verifica se a tupla contendo os dados passados consta na lista com as tuplas de dados cadastrados.
         print('-- Login efetuado --')
@@ -263,53 +265,58 @@ def ordenarProdutos(ord_de_cód=False, crescente=True):
             print(f"| Codigo: {produto['codigo']}     Produto: {produto['produto']:<18}", f"Preço: R${float(produto['preço']):<10.2f}".replace('.', ','), f"Estoque: {produto['estoque']:<5}", f"{'|':<1}")
 
 
-def compras(nome_do_arquivo='', definidor_de_retorno = True):
-    org = {}
-    lista_geral = []
-    cód_produtos = []
-    cód_usados = []
-    inf_do_arq = []
+def compras(nome_do_arquivo=''):
+    '''
+    ->Sistema de compras para análise do produto escolhido, quantidade a ser comprada e então alterar no armazenamento a quantidade do estoque.
+    :param nome_do_arquivo: Nome do arquivo com sua extensão.
+    :return: Retorna uma lista com dicionários que contém as informações de compra de cada produto escolhido.
+    '''
+    org = {} #Dicionário que irá conter as informações da compra de um produto.
+    lista_geral = [] #Lista que irá conter os dicionários de cada produto da compra.
+    cód_produtos = [] #Lista que irá armazenar os códigos de todos os produtos da loja.
+    cód_usados = [] #Lista que armazena os códigos já usados, para analise de repetições.
+    inf_do_arq = [] #Lista que irá conter as informações do arquivo, para sua modificação com base na compra.
     try:
         with open(nome_do_arquivo, 'rt', encoding='utf8') as arq:
             arq.readline()
             for linhas in arq:
-                cód_produtos.append(linhas.split(';')[0])
+                cód_produtos.append(linhas.split(';')[0]) #Passa todos os códigos de produto para a lista.
     except:
         print('-- Não foi possível a leitura do arquivo de produtos --')
     else:
 
         while True:
-            repetição = False
-            sem_estoque = False
+            repetição = False #Variável para análise de repetição.
+            sem_estoque = False #Variável para análise de produtos com estoque 0.
             try:
-                código = str(input('Código do produto: ')).strip()
+                código = str(input('Código do produto: ')).strip() #Código do produto que será comprado.
             except:
                 print('-- Digite uma numeração composta por 4 digitos --')
                 continue
             else:
-                if not código.isnumeric():
+                if not código.isnumeric(): #Verifica se é composto por somente números.
                     print('-- O código dos produtos são compostos somente por números --')
                     continue
-                if código not in cód_produtos:
+                if código not in cód_produtos: #Verifica se o código se encontra entre os códigos de produtos.
                     print('-- O código digitado não corresponde a um produto --')
                     continue
                 else:
-                    if código not in cód_usados:
+                    if código not in cód_usados: #Verifica se o código não foi usado antes, para criação de um novo dicionário.
                         with open(nome_do_arquivo, 'rt', encoding='utf8') as arq:
                             arq.readline()
                             for linhas in arq:
-                                if código == linhas.split(';')[0]:
-                                    if int(linhas.split(';')[3]) == 0:
-                                        sem_estoque = True
+                                if código == linhas.split(';')[0]: #Verifica qual o produto escolhido.
+                                    if int(linhas.split(';')[3]) == 0: #Verifica se está sem estoque.
+                                        sem_estoque = True #Caso estoque seja 0, a variável recebe True.
                                         print('-- No momento estamos com falta do produto --')
                                         break
-                                    else:
+                                    else: #Se houver estoque, passa informações para o dicionário.
                                         org['produto'] = linhas.split(';')[1]
                                         org['código'] = linhas.split(';')[0]
                                         org['preçoUnidade'] = float(linhas.split(';')[2])
                                         org['estoque'] = int(linhas.split(';')[3])
                                         cód_usados.append(código)
-                            if sem_estoque:
+                            if sem_estoque: #Caso a variável seja True, verifica se o cliente deseja continuar a compra.
                                 perg = str(input('Quer continuar a compra?[S/N] ')).strip().upper()[0]
                                 while perg not in 'SN':
                                     print('Digite SIM ou NÃO')
@@ -319,31 +326,31 @@ def compras(nome_do_arquivo='', definidor_de_retorno = True):
                                 else:
                                     break
                     else:
-                        repetição = True
+                        repetição = True #Caso o código esteja na lista de já usados, a var recebe True.
 
             while True:
                 try:
-                    quantidade = int(input('Quantidade a ser comprada:'))
+                    quantidade = int(input('Quantidade a ser comprada:')) #Quantidade do produto a ser comprada.
                 except:
                     print('Dado inválido')
                     continue
                 else:
-                    if not repetição:
-                        org['quantidade'] = quantidade
-                        if org['quantidade'] > org['estoque']:
+                    if not repetição: #Verifica se a var de repetição é False.
+                        org['quantidade'] = quantidade #Não sendo repetição, adiciona informação no dicionário.
+                        if org['quantidade'] > org['estoque']: #Verifica se a quantidade excede o estoque do produto.
                             print(f'-- A quantia excede o estoque de {org["estoque"]} {org["produto"]} --')
                             continue
                         else:
-                            org['estoque'] -= org['quantidade']
-                            org["preçoTot"] = org['quantidade'] * org['preçoUnidade']
-                            lista_geral.append(org.copy())
+                            org['estoque'] -= org['quantidade'] #Se não exceder, refaz o estoque com a subtração da quantidade comprada.
+                            org["preçoTot"] = org['quantidade'] * org['preçoUnidade'] #Adiciona no dicionário o preço total de compra daquele produto.
+                            lista_geral.append(org.copy()) #Manda para a lista que irá conter todos os dicionários, uma cópia das informações.
                     else:
-                        for num, dicionários in enumerate(lista_geral):
-                            if dicionários['código'] == código:
-                                if quantidade <= dicionários['estoque']:
-                                    lista_geral[num]['quantidade'] += quantidade
-                                    lista_geral[num]['preçoTot'] += quantidade * lista_geral[num]['preçoUnidade']
-                                    lista_geral[num]['estoque'] -= quantidade
+                        for num, dicionários in enumerate(lista_geral): #Percorre a lista, pegando seus índices e dicionários.
+                            if dicionários['código'] == código: #Verifica em qual dicionário está a correspondência de código.
+                                if quantidade <= dicionários['estoque']: #Verifica se a quantidade não excede o estoque do produto.
+                                    lista_geral[num]['quantidade'] += quantidade #Adiciona nas informações já existentes daquele produto, a quantidade a mais a ser comprada.
+                                    lista_geral[num]['preçoTot'] += quantidade * lista_geral[num]['preçoUnidade'] #Adiciona no preço total a quantia com base na quantidade comprada.
+                                    lista_geral[num]['estoque'] -= quantidade #Refaz o estoque do produto, subtraindo novamente com a quantidade a mais comprada.
                                 else:
                                     print(f'-- A quantidade excede o estoque de {lista_geral[num]["estoque"]} {lista_geral[num]["produto"]}')
                 break
@@ -351,27 +358,27 @@ def compras(nome_do_arquivo='', definidor_de_retorno = True):
             while perg not in 'SN':
                 print('Digite SIM ou NÃO')
                 perg = str(input('Deseja realizar mais uma compra?[S/N] ')).strip().upper()[0]
-            if perg == 'S':
+            if perg == 'S': #Verifica se quer fazer mais uma compra, caso 'S', volta para o mesmo processo.
                 continue
-            else:
+            else: #Não querendo realizar mais uma compra, é encerrado o processo.
                 break
 
-        with open(nome_do_arquivo, 'rt', encoding='utf8') as arq:
+        with open(nome_do_arquivo, 'rt', encoding='utf8') as arq: #Lê o arquivo.
             arq.readline()
             for linhas in arq:
-                inf_do_arq.append(linhas)
-        with open(nome_do_arquivo, 'wt+', encoding='utf8') as arq:
-            arq.write('código;produto;preço;estoque' + '\n')
-        with open(nome_do_arquivo, 'at', encoding='utf8') as arq:
-            for linhas in inf_do_arq:
+                inf_do_arq.append(linhas) #Passa para a lista cada linha do arquivo.
+        with open(nome_do_arquivo, 'wt+', encoding='utf8') as arq: #Cria um novo arquivo de mesmo nome.
+            arq.write('código;produto;preço;estoque' + '\n')  #Digita a primeira linha de organização.
+        with open(nome_do_arquivo, 'at', encoding='utf8') as arq: #Abre o arquivo récem criado, para incremento de informação.
+            for linhas in inf_do_arq: #Percorre a lista com as linhas do arquivo apagado e recriado.
                 if lista_geral == []:
-                    arq.write(linhas)
+                    arq.write(linhas) #Caso não tenha sido feita uma compra, ele repassa as informações sem alteração.
                 else:
-                    for dicionários in lista_geral:
-                        if linhas.split(';')[0] == dicionários['código']:
-                            correção = linhas.split(';')
-                            correção[3] = str(dicionários['estoque'])
-                            arq.write(';'.join(correção) + '\n')
+                    for dicionários in lista_geral: #Percorre os dicionários contidos na lista.
+                        if linhas.split(';')[0] == dicionários['código']: #Verifica se algum código das linhas armazenadas é igual a algum código de compra armazenado.
+                            correção = linhas.split(';') #Cria a var correção, para modificar o arquivo com base nas compras feitas.
+                            correção[3] = str(dicionários['estoque']) #Refaz o estoque do arquivo com base no estoque alterado pela compra.
+                            arq.write(';'.join(correção) + '\n') #Envia a alteração para o arquivo.
                         else:
-                            arq.write(linhas)
-    return lista_geral
+                            arq.write(linhas) #Não havendo igualdade com algum código de compra, envia para o arquivo informações sem alterações.
+    return lista_geral #Retorna a lista que contém todos os dados de compra dos produtos.
