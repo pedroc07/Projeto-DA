@@ -382,3 +382,24 @@ def compras(nome_do_arquivo=''):
                         else:
                             arq.write(linhas) #Não havendo igualdade com algum código de compra, envia para o arquivo informações sem alterações.
     return lista_geral #Retorna a lista que contém todos os dados de compra dos produtos.
+def adicionar_produtos():
+    login = realizarLogin()
+    if login == True:
+        ind = int(input("Digite 1 para adicionar produtos manualmente e 2 para adicionar através de um arquivo: "))
+        if ind == 1:
+            produtos = open('produtos.txt', 'r')
+            produto = '\n'
+            produto += input("Código: ")
+            produto += input("Nome do produto: ") + ';'
+            produto += input("Preço do produto: ") + ';'
+            produto += input("Estoque do produto: ")
+            produtos.close()
+            produtos = open('produtos.txt', 'a')
+            produtos.write(produto)
+            produtos.close()
+        elif ind == 2:
+            produtos = open('produtos.txt', 'a')
+            produto = '\n'
+            arquivo = input("Digite o arquivo de onde será importado: ")
+            produto = open(arquivo, 'r')
+            produtos.write(produto)
